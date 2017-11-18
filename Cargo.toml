@@ -1,0 +1,7 @@
+[package]
+name = "mazesolver"
+version = "0.1.0"
+authors = ["sam"]
+
+[dependencies]
+image = "*"
