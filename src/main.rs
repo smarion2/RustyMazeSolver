@@ -1,6 +1,7 @@
-use std::env;
+extern crate mazesolver;
 
-mod img_load;
+use std::env;
+use mazesolver::infurstructure;
 
 fn main() {
     let file = if env::args().count() == 2 {
@@ -8,5 +9,5 @@ fn main() {
     } else {
         panic!("Please enter a file")
     };
-    img_load::open(file);
+    infurstructure::img_load::open(file);
 }

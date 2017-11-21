@@ -3,6 +3,7 @@ extern crate image;
 use std::fs::File;
 use std::path::Path;
 
+use modals::wall_node;
 use self::image::GenericImage;
 
 pub fn open(file: String) {
@@ -20,4 +21,10 @@ pub fn open(file: String) {
 
     // Write the contents of this image to the Writer in PNG format.
     im.save(fout, image::PNG).unwrap();
+    let mut test = String::new();
+    let mut test1 = String::new();
+    let mut test2 = String::new();
+    let mut test3 = String::new();
+
+    let n = wall_node::node::new(1, 1, 1, 1, 1, 1, test, test1, test2, test3);
 }
