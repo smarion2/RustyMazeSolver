@@ -6,7 +6,7 @@ use std::path::Path;
 use modals::wall_node::node;
 use self::image::GenericImage;
 
-pub fn open(file: String) {
+pub fn open_maze(file: String) -> self::image::DynamicImage {
     // Use the open function to load an image from a PAth.
     // ```open``` returns a dynamic image.
     let im = image::open(&Path::new(&file)).unwrap();
@@ -20,11 +20,19 @@ pub fn open(file: String) {
     let fout = &mut File::create(&Path::new(&format!("{}.png", file))).unwrap();
 
     // Write the contents of this image to the Writer in PNG format.
-    im.save(fout, image::PNG).unwrap();
+    //im.save(fout, image::PNG).unwrap();
+    
+    return im;
+}
+
+fn create_wall_nodes(image: self::image::DynamicImage) -> vec![vec![node, 5]; 5]; {
     let mut test = String::new();
     let mut test1 = String::new();
     let mut test2 = String::new();
     let mut test3 = String::new();
 
     let n = node::new(1, 1, 1, 1, 1, 1, test, test1, test2, test3);
+    println!("Node crate with id: {}", n.node_id);
+
+    n
 }

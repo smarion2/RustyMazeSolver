@@ -1,1 +1,1 @@
-pub mod img_load;
+pub mod maze_initializer;

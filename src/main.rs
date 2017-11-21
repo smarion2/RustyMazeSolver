@@ -9,5 +9,5 @@ fn main() {
     } else {
         panic!("Please enter a file")
     };
-    infurstructure::img_load::open(file);
+    let img = infurstructure::maze_initializer::open_maze(file);
 }
