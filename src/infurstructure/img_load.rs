@@ -3,7 +3,7 @@ extern crate image;
 use std::fs::File;
 use std::path::Path;
 
-use modals::wall_node;
+use modals::wall_node::node;
 use self::image::GenericImage;
 
 pub fn open(file: String) {
@@ -26,5 +26,5 @@ pub fn open(file: String) {
     let mut test2 = String::new();
     let mut test3 = String::new();
 
-    let n = wall_node::node::new(1, 1, 1, 1, 1, 1, test, test1, test2, test3);
+    let n = node::new(1, 1, 1, 1, 1, 1, test, test1, test2, test3);
 }
