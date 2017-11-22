@@ -30,25 +30,22 @@ pub fn create_wall_nodes(image: self::image::DynamicImage) -> Vec<node> {
     
     let (width, height) = image.dimensions();
     let mut id: u32 = 1;
-    for mut x in 1..width {
-        for mut y in 1..height {
+    let mut x = 1;
+    let mut y = 1;
+    while x <= width - 6 {
+        while y <= height - 6 {
             let top_test = image.get_pixel(x + 3, y).data;
             let bottom_test = image.get_pixel(x + 3, y + 5).data;
             let left_test = image.get_pixel(x, y + 3).data;
             let right_test = image.get_pixel(x + 5, y + 3).data;
 
-            //let pixle_data = pixle.data;
-
-            //println!("{:?}", pixle.data);
+            let mut n = node::new(id, x, y, left_test[0], right_test[0], bottom_test[0], top_test[0]);
+            nodes.push(n);
             id += 1;
             y += 6;
         }
         x += 6;
+        y = 1;
     }
-
-    //let mut n = node::new(1, 1, 1, 1, 1, 1, test, test1, test2, test3);
-    //println!("Node crate with id: {}", n.node_id);
-    //nodes.push(n);
-
     nodes
 }
