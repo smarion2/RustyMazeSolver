@@ -9,15 +9,15 @@ pub struct node {
 
     pub num_of_openings: i32,
 
-    pub left_wall: String,
-    pub right_wall: String,
-    pub top_wall: String,
-    pub bot_wall: String,
+    pub left_wall: bool,
+    pub right_wall: bool,
+    pub top_wall: bool,
+    pub bot_wall: bool,
 }
 
 impl node {
     pub fn new(id: i32, px: i32, py: i32, posx: i32, posy: i32, openings: i32,
-            lwall: String, rwall: String, bwall: String, twall: String) -> node {
+            lwall: bool, rwall: bool, bwall: bool, twall: bool) -> node {
         let node_id = id;
         let from_node_id: i32 = 0;
         let pixle_x = px;
