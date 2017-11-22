@@ -25,14 +25,16 @@ pub fn open_maze(file: String) -> self::image::DynamicImage {
     return im;
 }
 
-fn create_wall_nodes(image: self::image::DynamicImage) -> vec![vec![node, 5]; 5]; {
+fn create_wall_nodes(image: self::image::DynamicImage) -> Vec<node> {
+    let mut nodes: Vec<node> = Vec::new();
     let mut test = String::new();
     let mut test1 = String::new();
     let mut test2 = String::new();
     let mut test3 = String::new();
 
-    let n = node::new(1, 1, 1, 1, 1, 1, test, test1, test2, test3);
+    let mut n = node::new(1, 1, 1, 1, 1, 1, test, test1, test2, test3);
     println!("Node crate with id: {}", n.node_id);
+    nodes.push(n);
 
-    n
+    nodes
 }
