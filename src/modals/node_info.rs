@@ -1,9 +1,10 @@
-pub struct info {
+pub struct maze_info {
     pub height: u8,
     pub width: u8,
     pub path_color: [u8; 3],
     pub maze_opening: point,
-    pub maze_ending: point
+    pub maze_ending: point, 
+    pub maze_rect: [point; 4]
 }
 
 pub struct point {
