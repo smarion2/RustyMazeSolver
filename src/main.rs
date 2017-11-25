@@ -10,5 +10,5 @@ fn main() {
         panic!("Please enter a file")
     };
     let img = infurstructure::maze_initializer::open_maze(file);
-    let nodes = infurstructure::maze_initializer::create_wall_nodes(img);
+    let nodes = infurstructure::maze_initializer::create_wall_nodes(&img);
 }
