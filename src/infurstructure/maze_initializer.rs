@@ -58,32 +58,38 @@ fn analyze_maze(image: self::image::DynamicImage) -> maze_info {
     let (img_width, img_height) = image.dimensions();
     let mut node_height = 0;
     let mut node_width = 0;
-    let mut wall_color = [0, 0, 0, 0];
+    let mut wall_color = image.get_pixel(0, 0).data;
     let mut path_color = [0, 0, 0, 0];
-    let mut current_color = [0, 0, 0, 0];
-    // get path color
-    for y in img_height {
-        for x in img_width {
-            let pixle = image.get_pixel(x, y).data;
-            if pixle != current_color {
-                current_color = pixle;
-                let mut length = 1;
-                while current_color == image.get_pixel(x + length, y).data {
-                    length += 1;
-                }
-            }
-
-
-        }           
-    }
-
-    while x <= img_width {
-        while y <= img_height {
-
-        }
-    }
+    let mut openings: Vec<point> = Vec::new();
     
+    let mut wall_length = 0;
+    let mut path_length = 0;
+    // get path color    
+    for y in 1..img_height {        
+        let pixle_color = image.get_pixel(0, y).data;
+        if pixle_color != wall_color {
+            openings.push(point{x: 0, y: y});
+            path_color = pixle_color;
+            let mut length = 1;
+            while pixle_color == image.get_pixel(0, y + length).data {
+                length += 1;
+            }
+            path_length = length;
+            let mut length = 1;
+            let mut pixle_color = [0, 0, 0, 0];
+            let wall_point = &openings[openings.len() - 1];
+            while pixle_color == image.get_pixel(wall_point.x + length, wall_point.y).data {
+                length += 1;
+            }
+            wall_length = length;
+        }
+    }    
     // not real info just making sure the function works
-    maze_info { height: 6, width: 6, path_color: [255, 255, 255], maze_opening: point{x, y}, maze_ending: point{x, y} }
+    maze_info { height: 6, width: 6, path_color: [255, 255, 255], maze_openings: openings}
+}
+
+fn check_vertical_wall(image: self::image::DynamicImage) -> (u8, u8, Vec<point>) {
+    let mut points: Vec<point> = Vec::new();
+    (4, 2, points)
 }
 
