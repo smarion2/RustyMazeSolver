@@ -65,7 +65,8 @@ fn analyze_maze(image: &self::image::DynamicImage) -> maze_info {
 
     // get path color  
 
-    let (path_length, wall_length, openings) = check_vertical_wall(&image, 0, wall_color);
+    println!("Checking left wall");
+    let (path_length, wall_length, openings) = check_walls(&image, 0, true, wall_color);
     println!("Path length: {}", path_length);
     println!("Wall length: {}", wall_length);
     if openings.len() != 0 {
@@ -73,7 +74,8 @@ fn analyze_maze(image: &self::image::DynamicImage) -> maze_info {
             println!("Opening found at x: {}, y: {}", p.x, p.y);
         }
     }
-    let (path_length, wall_length, openings) = check_vertical_wall(&image, img_width - 1, wall_color);
+    println!("Checking right wall");
+    let (path_length, wall_length, openings) = check_walls(&image, img_width - 1, true, wall_color);
     println!("Path length: {}", path_length);
     println!("Wall length: {}", wall_length);
     if openings.len() != 0 {
@@ -81,49 +83,89 @@ fn analyze_maze(image: &self::image::DynamicImage) -> maze_info {
             println!("Opening found at x: {}, y: {}", p.x, p.y);
         }
     }
-  
+    println!("Checking top wall");
+    let (path_length, wall_length, openings) = check_walls(&image, 1, false, wall_color);    
+    println!("Path length: {}", path_length);
+    println!("Wall length: {}", wall_length);
+    if openings.len() != 0 {
+        for p in &openings {
+            println!("Opening found at x: {}, y: {}", p.x, p.y);
+        }
+    }
+    println!("checking bottom wall");
+    let (path_length, wall_length, openings) = check_walls(&image, img_height - 1, false, wall_color);
+    println!("Path length: {}", path_length);
+    println!("Wall length: {}", wall_length);
+    if openings.len() != 0 {
+        for p in &openings {
+            println!("Opening found at x: {}, y: {}", p.x, p.y);
+        }
+    }
     // not real info just making sure the function works
     maze_info { height: 6, width: 6, path_color: [255, 255, 255], maze_openings: openings}
 }
 
-fn check_vertical_wall(image: &self::image::DynamicImage, x: u32, wall_color: [u8; 4]) -> (u32, u32, Vec<point>) {
+fn check_walls(image: &self::image::DynamicImage, wall_pos: u32, is_vertical: bool, wall_color: [u8; 4]) -> (u32, u32, Vec<point>) {
     let (img_width, img_height) = image.dimensions();
     let mut points: Vec<point> = Vec::new();
     let mut path_color = [0, 0, 0, 0];
     let mut wall_length: u32 = 0;
     let mut path_length: u32 = 0;
-    let mut opening_found = false;
-    for y in 1..img_height {        
-        let pixle_color = image.get_pixel(x, y).data;
-        if pixle_color != wall_color && !opening_found {            
-            points.push(point{x: x, y: y});
-            path_color = pixle_color;
-            let mut length: u32 = 1;
-            while pixle_color == image.get_pixel(x, y + length).data {
-                length += 1;
-            }
-            if length < path_length || path_length == 0 {
-                path_length = length;
-            }
-            let mut length: u32 = 1;
-            //let mut pixle_color = [0, 0, 0, 0];
-            let wall_point = &points[0];
-            if x == 0 {
+    println!("Checking walls now...");
+    if is_vertical {
+        for y in 1..img_height {
+            let pixle_color = image.get_pixel(wall_pos, y).data;
+            if pixle_color != wall_color {            
+                points.push(point{x: wall_pos, y: y});
+                path_color = pixle_color;
+                let mut length: u32 = 1;
+                while pixle_color == image.get_pixel(wall_pos, y + length).data {
+                    length += 1;
+                }
+                if length < path_length || path_length == 0 {
+                    path_length = length;
+                }
+                let mut length: u32 = 1;
+                //let mut pixle_color = [0, 0, 0, 0];
+                let wall_point = &points[0];
                 while wall_color == image.get_pixel(wall_point.x + length, wall_point.y - 1).data {
                     length += 1;
+                }                
+                if length < wall_length || wall_length == 0 {
+                    wall_length = length;
                 }
             }
-            else {
-                while wall_color == image.get_pixel(wall_point.x - length, wall_point.y - 1).data {
+        } 
+    }
+    else {
+        println!("die here? {:?}", image.get_pixel(1, wall_pos).data);
+        for x in 1..img_width {            
+            print!("x:{} ", x);
+            let pixle_color = image.get_pixel(x, wall_pos).data;
+            println!("does it get here?");
+            if pixle_color != wall_color {
+                points.push(point{x: x, y: wall_pos});
+                path_color = pixle_color;
+                let mut length: u32 = 1;
+                println!("how about here?");
+                while pixle_color == image.get_pixel(x + length, wall_pos).data {
                     length += 1;
                 }
+                if length < path_length || path_length == 0 {
+                    path_length = length;
+                }
+                let mut length: u32 = 1;
+                let wall_point = &points[0];
+                while wall_color == image.get_pixel(wall_point.x - 1, wall_point.y + length).data {
+                    length += 1;
+                }
+                if length < wall_length || wall_length == 0 {
+                    wall_length = length;
+                }
             }
-            if length < wall_length || wall_length == 0 {
-                wall_length = length;
-            }
-            opening_found = true;
         }
-    }  
+        print!("maybe i die here?");
+    }
     (path_length, wall_length, points)
 }
 
