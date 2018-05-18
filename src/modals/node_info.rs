@@ -1,7 +1,6 @@
 pub struct maze_info {
-    pub height: u8,
-    pub width: u8,
-    pub path_color: [u8; 3],
+    pub path_length: u8,
+    pub wall_length: u8,
     pub maze_openings: Vec<point>
 }
 
