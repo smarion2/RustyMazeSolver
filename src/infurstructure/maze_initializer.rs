@@ -118,53 +118,54 @@ fn check_walls(image: &self::image::DynamicImage, wall_pos: u32, is_vertical: bo
             if pixle_color != wall_color {            
                 points.push(point{x: wall_pos, y: y});
                 path_color = pixle_color;
-                let mut length: u32 = 1;
+                let mut length: u32 = 0;
                 while pixle_color == image.get_pixel(wall_pos, y + length).data {
+                    //println!("Length: {}", length);
                     length += 1;
                 }
-                if length < path_length || path_length == 0 {
-                    path_length = length;
+                if path_length == 0 {
+                   path_length = length;
+                   //println!("Path Length set: {}", length);
                 }
-                let mut length: u32 = 1;
+                let mut length: u32 = 0;
                 //let mut pixle_color = [0, 0, 0, 0];
                 let wall_point = &points[0];
                 while wall_color == image.get_pixel(wall_point.x + length, wall_point.y - 1).data {
+                    //println!("wall Length: {}", length);
                     length += 1;
                 }                
-                if length < wall_length || wall_length == 0 {
+                if wall_length == 0 {
+                    //println!("wall Length set: {}", length);
                     wall_length = length;
                 }
             }
         } 
     }
     else {
-        println!("die here? {:?}", image.get_pixel(1, wall_pos).data);
-        for x in 1..img_width {            
-            print!("x:{} ", x);
+        for x in 1..img_width {
             let pixle_color = image.get_pixel(x, wall_pos).data;
-            println!("does it get here?");
             if pixle_color != wall_color {
                 points.push(point{x: x, y: wall_pos});
                 path_color = pixle_color;
-                let mut length: u32 = 1;
-                println!("how about here?");
+                let mut length: u32 = 0;
                 while pixle_color == image.get_pixel(x + length, wall_pos).data {
                     length += 1;
                 }
-                if length < path_length || path_length == 0 {
+                if path_length == 0 {
                     path_length = length;
                 }
-                let mut length: u32 = 1;
+                let mut length: u32 = 0;
                 let wall_point = &points[0];
+                println!("wall_pointx: {} wall_pointy: {}", wall_point.x - 1, wall_point.y);
                 while wall_color == image.get_pixel(wall_point.x - 1, wall_point.y + length).data {
+                    println!("wall found length: {}", length);
                     length += 1;
                 }
-                if length < wall_length || wall_length == 0 {
-                    wall_length = length;
+                if wall_length == 0 {
+                   wall_length = length;
                 }
             }
         }
-        print!("maybe i die here?");
     }
     (path_length, wall_length, points)
 }
