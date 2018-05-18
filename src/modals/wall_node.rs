@@ -1,4 +1,4 @@
-pub struct node {
+pub struct Node {
     pub node_id: u32,
     pub from_node_id: u32,
     pub pixle_x: u32,
@@ -9,14 +9,14 @@ pub struct node {
     pub left_wall: bool,
     pub right_wall: bool,
     pub top_wall: bool,
-    pub bot_wall: bool,
+    pub bot_wall: bool
 }
 
-impl node {
+impl Node {
     pub fn new(id: u32, px: u32, py: u32, 
-            lwall: u8, rwall: u8, bwall: u8, twall: u8) -> node {
+            lwall: u8, rwall: u8, bwall: u8, twall: u8) -> Node {
         let node_id = id;
-        let mut from_node_id: u32 = 0;
+        let from_node_id: u32 = 0;
         let pixle_x = px;
         let pixle_y = py;
         let mut num_of_openings = 0;
@@ -42,11 +42,6 @@ impl node {
             num_of_openings += 1;
         }
 
-        println!("NOde id: {}", node_id);
-        println!("x, y: ({},{})", pixle_x, pixle_y);
-        println!("Number of openings: {}", num_of_openings);
-        println!("----------------");
-
-        node { node_id, from_node_id, pixle_x, pixle_y, num_of_openings, left_wall, right_wall, bot_wall, top_wall }
+        Node { node_id, from_node_id, pixle_x, pixle_y, num_of_openings, left_wall, right_wall, bot_wall, top_wall }
     }
 }

@@ -1,11 +1,10 @@
 extern crate image;
 
-use std::fs::File;
 use std::path::Path;
 
-use modals::wall_node::node;
-use modals::node_info::point;
-use modals::node_info::maze_info;
+use modals::wall_node::Node;
+use modals::node_info::Point;
+use modals::node_info::MazeInfo;
 
 use self::image::GenericImage;
 
@@ -28,33 +27,29 @@ pub fn open_maze(file: String) -> self::image::DynamicImage {
     return im;
 }
 
-pub fn create_wall_nodes(image: &self::image::DynamicImage) -> Vec<node> {
-    let mut nodes: Vec<node> = Vec::new();
+pub fn create_wall_nodes(image: &self::image::DynamicImage) -> Vec<Node> {
+    let mut nodes: Vec<Node> = Vec::new();
     let info = analyze_maze(image);    
-    println!("path length: {}", info.path_length);
-    println!("wall length: {}", info.wall_length);
-    println!("Openings: ");
-    for p in &info.maze_openings {
-        println!("({},{})", p.x, p.y);
-    }
     let (width, height) = image.dimensions();
-    let mut id: u32 = 1;
+    let mut id: u32 = 0;
     let mut x = 0;
     let mut y = 0;
-    let mut node_length = 0;
+    let node_length: u8;
     if info.wall_length % 2 == 0 {
         x = 1;
         y = 1;
     }
     node_length = info.wall_length + info.path_length;
-    while x <= width - node_length as u32 {
-        while y <= height - node_length as u32 {
+    let xbounds = width - node_length as u32; 
+    let ybounds = height - node_length as u32;
+    while x <= xbounds {
+        while y <= ybounds {
             let top_test = image.get_pixel(x + info.path_length as u32 - 1, y).data;
             let bottom_test = image.get_pixel(x + info.path_length as u32 - 1, y + info.path_length as u32 + 1).data;
             let left_test = image.get_pixel(x, y + info.path_length as u32 - 1).data;
             let right_test = image.get_pixel(x + info.path_length as u32 + 1, y + info.path_length as u32 - 1).data;
 
-            let mut n = node::new(id, x, y, left_test[0], right_test[0], bottom_test[0], top_test[0]);
+            let n = Node::new(id, x, y, left_test[0], right_test[0], bottom_test[0], top_test[0]);
             nodes.push(n);
             id += 1;
             y += node_length as u32;
@@ -63,71 +58,83 @@ pub fn create_wall_nodes(image: &self::image::DynamicImage) -> Vec<node> {
         y = 1;
     }
     println!("{} Nodes created", nodes.len());
+    
+    println!("path length: {}", info.path_length);
+    println!("wall length: {}", info.wall_length);
+    
+    // find entrance and exit node ids
+    let maze_entrance = convert_xy_to_vecpos(&info.maze_openings[0], width, node_length as u8);
+    let maze_exit = convert_xy_to_vecpos(&info.maze_openings[info.path_length as usize], width, node_length);
+    println!("pint1: ({},{})", &info.maze_openings[0].x, &info.maze_openings[0].y);
+    println!("point2: ({},{})", &info.maze_openings[info.path_length as usize].x, &info.maze_openings[info.path_length as usize].y);
+    
+    println!("maze entrance id: {}", maze_entrance);
+    println!("maze exit id: {}", maze_exit);
+
     nodes
 }
 // need to decide how much to analyze, i dont think going through the entire maze is necessary 
 // maybe just look around all the edges for opening and closing and a few lines?
-fn analyze_maze(image: &self::image::DynamicImage) -> maze_info { 
+fn analyze_maze(image: &self::image::DynamicImage) -> MazeInfo { 
     println!("Maze loaded scanning maze now...");
     let (img_width, img_height) = image.dimensions();       
     let wall_color = image.get_pixel(0, 0).data;
     let mut path_width: u8 = 0;
-    let mut path_color = [0, 0, 0, 0];
-    let mut openings: Vec<point> = Vec::new();    
-    let mut is_Path_Uniform = false;
+    let mut openings: Vec<Point> = Vec::new();    
+    let is_path_uniform = false;
 
     let (path_length, maze_openings) = check_for_openings(&image, 0, true, wall_color);
     if path_length != 0 {
-        let (new_path, is_Path_Uniform) = check_path_length(path_width, path_length);
-        if (new_path != 0) {
+        let (new_path, is_path_uniform) = check_path_length(path_width, path_length);
+        if new_path != 0 {
             path_width = new_path;
         }
     }
     if maze_openings.len() != 0 {
         for p in &maze_openings {
-            openings.push(point{x: p.x, y: p.y});
+            openings.push(Point{x: p.x, y: p.y});
         }
     }
     let (path_length, maze_openings) = check_for_openings(&image, img_width - 1, true, wall_color);
     if path_length != 0 {
-        let (new_path, is_Path_Uniform) = check_path_length(path_width, path_length);
-        if (new_path != 0) {
+        let (new_path, is_path_uniform) = check_path_length(path_width, path_length);
+        if new_path != 0 {
             path_width = new_path;
         }
     }
     if maze_openings.len() != 0 {
         for p in &maze_openings {
-            openings.push(point{x: p.x, y: p.y});
+            openings.push(Point{x: p.x, y: p.y});
         }
     }
 
     let (path_length, maze_openings) = check_for_openings(&image, 1, false, wall_color);
     if path_length != 0 {
-        let (new_path, is_Path_Uniform) = check_path_length(path_width, path_length);
-        if (new_path != 0) {
+        let (new_path, is_path_uniform) = check_path_length(path_width, path_length);
+        if new_path != 0 {
             path_width = new_path;
         }
     }
     if maze_openings.len() != 0 {
         for p in &maze_openings {
-            openings.push(point{x: p.x, y: p.y});
+            openings.push(Point{x: p.x, y: p.y});
         }
     }
     let (path_length, maze_openings) = check_for_openings(&image, img_height - 1, false, wall_color);
     if path_length != 0 {
-        let (new_path, is_Path_Uniform) = check_path_length(path_width, path_length);
-        if (new_path != 0) {
+        let (new_path, is_path_uniform) = check_path_length(path_width, path_length);
+        if new_path != 0 {
             path_width = new_path;
         }
     }
     if maze_openings.len() != 0 {
         for p in &maze_openings {
-            openings.push(point{x: p.x, y: p.y});
+            openings.push(Point{x: p.x, y: p.y});
         }
     }
     let wall_length = check_for_wall_length(&image, wall_color);
 
-    maze_info { path_length: path_width, wall_length: wall_length, maze_openings: openings}
+    MazeInfo { path_length: path_width, wall_length: wall_length, maze_openings: openings}
 }
 
 fn check_path_length(current: u8, new_length: u8) -> (u8, bool) {
@@ -163,17 +170,22 @@ fn check_for_wall_length(image: &self::image::DynamicImage, wall_color: [u8; 4])
     wall_length + 1
 }
 
-fn check_for_openings(image: &self::image::DynamicImage, wall_pos: u32, is_vertical: bool, wall_color: [u8; 4]) -> (u8, Vec<point>) {
+fn convert_xy_to_vecpos(point: &Point, maze_width: u32, node_width: u8) -> u32 {
+    let nodes_per_row = maze_width / node_width as u32;
+    let x_pos = (point.x) / node_width as u32;
+    let y_pos = (point.y) / node_width as u32;
+    y_pos * nodes_per_row + x_pos
+}
+
+fn check_for_openings(image: &self::image::DynamicImage, wall_pos: u32, is_vertical: bool, wall_color: [u8; 4]) -> (u8, Vec<Point>) {
     let (img_width, img_height) = image.dimensions();
-    let mut points: Vec<point> = Vec::new();
-    let mut path_color = [0, 0, 0, 0];
+    let mut points: Vec<Point> = Vec::new();
     let mut path_length: u8 = 0;
     if is_vertical {
         for y in 1..img_height {
-            let pixle_color = image.get_pixel(wall_pos, y).data;
+            let pixle_color = image.get_pixel(wall_pos, y).data;            
             if pixle_color != wall_color {            
-                points.push(point{x: wall_pos, y: y});
-                path_color = pixle_color;
+                points.push(Point{x: wall_pos, y: y});
                 let mut length: u8 = 0;
                 while pixle_color == image.get_pixel(wall_pos, y + length as u32).data {
                     length += 1;
@@ -188,8 +200,7 @@ fn check_for_openings(image: &self::image::DynamicImage, wall_pos: u32, is_verti
         for x in 1..img_width {
             let pixle_color = image.get_pixel(x, wall_pos).data;
             if pixle_color != wall_color {
-                points.push(point{x: x, y: wall_pos});
-                path_color = pixle_color;
+                points.push(Point{x: x, y: wall_pos});
                 let mut length: u8 = 0;
                 while pixle_color == image.get_pixel(x + length as u32, wall_pos).data {
                     length += 1;
