@@ -63,7 +63,7 @@ pub fn create_wall_nodes(image: &self::image::DynamicImage) -> Vec<Node> {
     println!("wall length: {}", info.wall_length);
     
     // find entrance and exit node ids
-    let maze_entrance = convert_xy_to_vecpos(&info.maze_openings[0], width, node_length as u8);
+    let maze_entrance = convert_xy_to_vecpos(&info.maze_openings[0], width, node_length);
     let maze_exit = convert_xy_to_vecpos(&info.maze_openings[info.path_length as usize], width, node_length);
     println!("pint1: ({},{})", &info.maze_openings[0].x, &info.maze_openings[0].y);
     println!("point2: ({},{})", &info.maze_openings[info.path_length as usize].x, &info.maze_openings[info.path_length as usize].y);
