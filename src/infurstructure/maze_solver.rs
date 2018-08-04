@@ -4,9 +4,10 @@ use modals::node_info::MazeInfo;
 
 
 
-pub fn solve_maze(nodes: Vec<Node>) {
+pub fn solve_maze(info: MazeInfo) {
     let mut mazeSolved = false;
     while (!mazeSolved) {
+        
         mazeSolved = true;
     }
 

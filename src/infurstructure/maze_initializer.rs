@@ -27,9 +27,8 @@ pub fn open_maze(file: String) -> self::image::DynamicImage {
     return im;
 }
 
-pub fn create_wall_nodes(image: &self::image::DynamicImage) -> Vec<Node> {
-    let mut nodes: Vec<Node> = Vec::new();
-    let info = analyze_maze(image);    
+pub fn create_wall_nodes(image: &self::image::DynamicImage) -> MazeInfo {
+    let mut info = analyze_maze(image);    
     let (width, height) = image.dimensions();
     let mut id: u32 = 0;
     let mut x = 0;
@@ -50,14 +49,14 @@ pub fn create_wall_nodes(image: &self::image::DynamicImage) -> Vec<Node> {
             let right_test = image.get_pixel(x + info.path_length as u32 + 1, y + info.path_length as u32 - 1).data;
 
             let n = Node::new(id, x, y, left_test[0], right_test[0], bottom_test[0], top_test[0]);
-            nodes.push(n);
+            info.maze_nodes.push(n);
             id += 1;
             y += node_length as u32;
         }
         x += node_length as u32;
         y = 1;
     }
-    println!("{} Nodes created", nodes.len());
+    println!("{} Nodes created", info.maze_nodes.len());
     
     println!("path length: {}", info.path_length);
     println!("wall length: {}", info.wall_length);
@@ -71,7 +70,7 @@ pub fn create_wall_nodes(image: &self::image::DynamicImage) -> Vec<Node> {
     println!("maze entrance id: {}", maze_entrance);
     println!("maze exit id: {}", maze_exit);
 
-    nodes
+    info
 }
 // need to decide how much to analyze, i dont think going through the entire maze is necessary 
 // maybe just look around all the edges for opening and closing and a few lines?
@@ -133,8 +132,8 @@ fn analyze_maze(image: &self::image::DynamicImage) -> MazeInfo {
         }
     }
     let wall_length = check_for_wall_length(&image, wall_color);
-
-    MazeInfo { path_length: path_width, wall_length: wall_length, maze_openings: openings}
+    let nodes: Vec<Node> = Vec::new();
+    MazeInfo { path_length: path_width, wall_length: wall_length, maze_openings: openings, maze_nodes: nodes }
 }
 
 fn check_path_length(current: u8, new_length: u8) -> (u8, bool) {
