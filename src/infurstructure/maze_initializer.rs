@@ -5,6 +5,7 @@ use std::path::Path;
 use modals::wall_node::Node;
 use modals::node_info::Point;
 use modals::node_info::MazeInfo;
+use modals::node_info::Processed_Maze;
 
 use self::image::GenericImage;
 
@@ -27,8 +28,9 @@ pub fn open_maze(file: String) -> self::image::DynamicImage {
     return im;
 }
 
-pub fn create_wall_nodes(image: &self::image::DynamicImage) -> MazeInfo {
-    let mut info = analyze_maze(image);    
+pub fn create_wall_nodes(image: &self::image::DynamicImage) -> Processed_Maze {
+    let mut info = analyze_maze(image);
+    let mut nodes: Vec<Node> = Vec::new();
     let (width, height) = image.dimensions();
     let mut id: u32 = 0;
     let mut x = 0;
@@ -49,14 +51,14 @@ pub fn create_wall_nodes(image: &self::image::DynamicImage) -> MazeInfo {
             let right_test = image.get_pixel(x + info.path_length as u32 + 1, y + info.path_length as u32 - 1).data;
 
             let n = Node::new(id, x, y, left_test[0], right_test[0], bottom_test[0], top_test[0]);
-            info.maze_nodes.push(n);
+            nodes.push(n);
             id += 1;
             y += node_length as u32;
         }
         x += node_length as u32;
         y = 1;
     }
-    println!("{} Nodes created", info.maze_nodes.len());
+    println!("{} Nodes created", nodes.len());
     
     println!("path length: {}", info.path_length);
     println!("wall length: {}", info.wall_length);
@@ -70,7 +72,7 @@ pub fn create_wall_nodes(image: &self::image::DynamicImage) -> MazeInfo {
     println!("maze entrance id: {}", maze_entrance);
     println!("maze exit id: {}", maze_exit);
 
-    info
+    Processed_Maze { starting_node: maze_entrance, ending_node: maze_exit, maze_nodes: nodes }
 }
 // need to decide how much to analyze, i dont think going through the entire maze is necessary 
 // maybe just look around all the edges for opening and closing and a few lines?
@@ -131,9 +133,8 @@ fn analyze_maze(image: &self::image::DynamicImage) -> MazeInfo {
             openings.push(Point{x: p.x, y: p.y});
         }
     }
-    let wall_length = check_for_wall_length(&image, wall_color);
-    let nodes: Vec<Node> = Vec::new();
-    MazeInfo { path_length: path_width, wall_length: wall_length, maze_openings: openings, maze_nodes: nodes }
+    let wall_length = check_for_wall_length(&image, wall_color);    
+    MazeInfo { path_length: path_width, wall_length: wall_length, maze_openings: openings }
 }
 
 fn check_path_length(current: u8, new_length: u8) -> (u8, bool) {
