@@ -5,7 +5,7 @@ use std::path::Path;
 use modals::wall_node::Node;
 use modals::node_info::Point;
 use modals::node_info::MazeInfo;
-use modals::node_info::Processed_Maze;
+use modals::node_info::ProcessedMaze;
 
 use self::image::GenericImage;
 
@@ -28,7 +28,7 @@ pub fn open_maze(file: String) -> self::image::DynamicImage {
     return im;
 }
 
-pub fn create_wall_nodes(image: &self::image::DynamicImage) -> Processed_Maze {
+pub fn create_wall_nodes(image: &self::image::DynamicImage) -> ProcessedMaze {
     let mut info = analyze_maze(image);
     let mut nodes: Vec<Node> = Vec::new();
     let (width, height) = image.dimensions();
@@ -64,7 +64,8 @@ pub fn create_wall_nodes(image: &self::image::DynamicImage) -> Processed_Maze {
     println!("wall length: {}", info.wall_length);
     
     // find entrance and exit node ids
-    let maze_entrance = convert_xy_to_vecpos(&info.maze_openings[0], width, node_length);
+    let nodes_per_row = width / node_length as u32;
+    let maze_entrance = convert_xy_to_vecpos(&info.maze_openings[0], nodes_per_row, node_length);
     let maze_exit = convert_xy_to_vecpos(&info.maze_openings[info.path_length as usize], width, node_length);
     println!("pint1: ({},{})", &info.maze_openings[0].x, &info.maze_openings[0].y);
     println!("point2: ({},{})", &info.maze_openings[info.path_length as usize].x, &info.maze_openings[info.path_length as usize].y);
@@ -72,7 +73,7 @@ pub fn create_wall_nodes(image: &self::image::DynamicImage) -> Processed_Maze {
     println!("maze entrance id: {}", maze_entrance);
     println!("maze exit id: {}", maze_exit);
 
-    Processed_Maze { starting_node: maze_entrance, ending_node: maze_exit, maze_nodes: nodes }
+    ProcessedMaze { starting_node: maze_entrance, ending_node: maze_exit, nodes_per_row: nodes_per_row, maze_nodes: nodes }
 }
 // need to decide how much to analyze, i dont think going through the entire maze is necessary 
 // maybe just look around all the edges for opening and closing and a few lines?
@@ -170,10 +171,9 @@ fn check_for_wall_length(image: &self::image::DynamicImage, wall_color: [u8; 4])
     wall_length + 1
 }
 
-fn convert_xy_to_vecpos(point: &Point, maze_width: u32, node_width: u8) -> u32 {
-    let nodes_per_row = maze_width / node_width as u32;
-    let x_pos = (point.x) / node_width as u32;
-    let y_pos = (point.y) / node_width as u32;
+fn convert_xy_to_vecpos(point: &Point, nodes_per_row: u32, node_length: u8) -> u32 {    
+    let x_pos = (point.x) / node_length as u32;
+    let y_pos = (point.y) / node_length as u32;
     y_pos * nodes_per_row + x_pos
 }
 
