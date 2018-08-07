@@ -15,33 +15,41 @@ pub struct Node {
 impl Node {
     pub fn new(id: u32, px: u32, py: u32, 
             lwall: u8, rwall: u8, bwall: u8, twall: u8) -> Node {
-        let node_id = id;
-        let from_node_id: u32 = 0;
         let pixle_x = px;
         let pixle_y = py;
-        let mut num_of_openings = 0;
-        let left_wall = false;
-        let right_wall = false;
-        let top_wall = false;
-        let bot_wall = false;
+        let mut openings = 0;
+        let mut left = false;
+        let mut right = false;
+        let mut top = false;
+        let mut bot = false;
 
         if lwall == 255 {
-            let left_wall = true;
-            num_of_openings += 1;
+            left = true;
+            openings += 1;
         }
         if rwall == 255 {
-            let right_wall = true;
-            num_of_openings += 1;
+            right = true;
+            openings += 1;
         }
         if bwall == 255 {
-            let bot_wall = true;
-            num_of_openings += 1;
+            bot = true;
+            openings += 1;
         }
         if twall == 255 {
-            let top_wall = true;
-            num_of_openings += 1;
+            let top = true;
+            openings += 1;
         }
 
-        Node { node_id, from_node_id, pixle_x, pixle_y, num_of_openings, left_wall, right_wall, bot_wall, top_wall }
+        Node {
+            node_id: id,
+            from_node_id: 0,
+            pixle_x: px,
+            pixle_y: py,
+            num_of_openings: openings,
+            left_wall: left,
+            right_wall: right,
+            bot_wall: bot,
+            top_wall: top
+        }
     }
 }

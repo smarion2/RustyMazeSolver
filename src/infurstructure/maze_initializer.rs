@@ -29,7 +29,7 @@ pub fn open_maze(file: String) -> self::image::DynamicImage {
 }
 
 pub fn create_wall_nodes(image: &self::image::DynamicImage) -> ProcessedMaze {
-    let mut info = analyze_maze(image);
+    let info = analyze_maze(image);
     let mut nodes: Vec<Node> = Vec::new();
     let (width, height) = image.dimensions();
     let mut id: u32 = 0;
@@ -133,6 +133,9 @@ fn analyze_maze(image: &self::image::DynamicImage) -> MazeInfo {
         for p in &maze_openings {
             openings.push(Point{x: p.x, y: p.y});
         }
+    }
+    if !is_path_uniform {
+        println!("Path is unstable!");
     }
     let wall_length = check_for_wall_length(&image, wall_color);    
     MazeInfo { path_length: path_width, wall_length: wall_length, maze_openings: openings }
