@@ -36,7 +36,7 @@ impl Node {
             openings += 1;
         }
         if twall == 255 {
-            let top = true;
+            top = true;
             openings += 1;
         }
 
@@ -50,6 +50,20 @@ impl Node {
             right_wall: right,
             bot_wall: bot,
             top_wall: top
+        }
+    }
+
+    pub fn clone(node: &Node) -> Node {
+        Node {
+            node_id: node.node_id,
+            from_node_id: node.from_node_id,
+            pixle_x: node.pixle_x,
+            pixle_y: node.pixle_y,
+            num_of_openings: node.num_of_openings,
+            left_wall: node.left_wall,
+            right_wall: node.right_wall,
+            bot_wall: node.bot_wall,
+            top_wall: node.top_wall
         }
     }
 }
