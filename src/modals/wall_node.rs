@@ -4,8 +4,8 @@ use std::cmp::Ordering;
 pub struct Node {
     pub node_id: u32,
     pub from_node_id: u32,
-    pub pixle_x: u32,
-    pub pixle_y: u32,
+    pub pixle_x: i32,
+    pub pixle_y: i32,
 
     pub left_wall: bool,
     pub right_wall: bool,
@@ -14,7 +14,7 @@ pub struct Node {
 
     pub f: u32,
     pub g: u32,
-    pub h: u32
+    pub h: i32
 }
 
 impl Ord for Node {
@@ -31,7 +31,7 @@ impl PartialOrd for Node {
 }
 
 impl Node {
-    pub fn new(id: u32, px: u32, py: u32, 
+    pub fn new(id: u32, px: i32, py: i32, 
             lwall: u8, rwall: u8, bwall: u8, twall: u8) -> Node {
         let pixle_x = px;
         let pixle_y = py;

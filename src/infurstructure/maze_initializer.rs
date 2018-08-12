@@ -50,7 +50,7 @@ pub fn create_wall_nodes(image: &self::image::DynamicImage) -> ProcessedMaze {
             let left_test = image.get_pixel(x, y + info.path_length as u32 - 1).data;
             let right_test = image.get_pixel(x + info.path_length as u32 + 1, y + info.path_length as u32 - 1).data;
 
-            let n = Node::new(id, x, y, left_test[0], right_test[0], bottom_test[0], top_test[0]);
+            let n = Node::new(id, x as i32, y as i32, left_test[0], right_test[0], bottom_test[0], top_test[0]);
             nodes.push(n);
             id += 1;
             y += node_length as u32;
