@@ -1,3 +1,6 @@
+use std::cmp::Ordering;
+
+#[derive(Copy, Clone, Eq, PartialEq)]
 pub struct Node {
     pub node_id: u32,
     pub from_node_id: u32,
@@ -7,7 +10,24 @@ pub struct Node {
     pub left_wall: bool,
     pub right_wall: bool,
     pub top_wall: bool,
-    pub bot_wall: bool
+    pub bot_wall: bool,
+
+    pub f: u32,
+    pub g: u32,
+    pub h: u32
+}
+
+impl Ord for Node {
+    fn cmp(&self, other: &Node) -> Ordering {
+        other.f.cmp(&self.f)
+            .then_with(|| self.g.cmp(&other.g))
+    }
+}
+
+impl PartialOrd for Node {
+    fn partial_cmp(&self, other: &Node) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
 }
 
 impl Node {
@@ -41,7 +61,10 @@ impl Node {
             left_wall: left,
             right_wall: right,
             bot_wall: bot,
-            top_wall: top
+            top_wall: top,
+            f: 0,
+            g: 0,
+            h: 0
         }
     }
 
@@ -54,7 +77,10 @@ impl Node {
             left_wall: node.left_wall,
             right_wall: node.right_wall,
             bot_wall: node.bot_wall,
-            top_wall: node.top_wall
+            top_wall: node.top_wall,
+            f: node.f,
+            g: node.g,
+            h: node.h
         }
     }
 }
