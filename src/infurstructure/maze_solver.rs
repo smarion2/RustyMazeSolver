@@ -20,7 +20,6 @@ pub fn search_path(mut maze: &mut ProcessedMaze, node_id: u32) {
             let move_left = &mut maze.maze_nodes[transverse(Direction::Left, node_id, maze.nodes_per_row)];
             move_left.from_node_id = node_id;
             move_left.right_wall = false;
-            move_left.num_of_openings -= 1;
             new_node_id = move_left.node_id;
         }
     }
@@ -29,7 +28,6 @@ pub fn search_path(mut maze: &mut ProcessedMaze, node_id: u32) {
             let move_right = &mut maze.maze_nodes[transverse(Direction::Right, node_id, maze.nodes_per_row)];
             move_right.from_node_id = node_id;
             move_right.left_wall = false;
-            move_right.num_of_openings -= 1;
             new_node_id = move_right.node_id;
         }
     }
@@ -38,7 +36,6 @@ pub fn search_path(mut maze: &mut ProcessedMaze, node_id: u32) {
             let move_up = &mut maze.maze_nodes[transverse(Direction::Up, node_id, maze.nodes_per_row)];
             move_up.from_node_id = node_id;
             move_up.bot_wall = false;
-            move_up.num_of_openings -= 1;
             new_node_id = move_up.node_id;
         }
     }
@@ -47,19 +44,9 @@ pub fn search_path(mut maze: &mut ProcessedMaze, node_id: u32) {
             let move_down = &mut maze.maze_nodes[transverse(Direction::Down, node_id, maze.nodes_per_row)];
             move_down.from_node_id = node_id;
             move_down.top_wall = false;
-            move_down.num_of_openings -= 1;
             new_node_id = move_down.node_id;
         }
     }
-
-    if node.num_of_openings < 3 {
-        search_path(&mut maze, new_node_id);
-    }
-    else {
-        // make thread and go.
-    }
-
-
 }
 
 pub fn transverse(direction: Direction, node_id: u32, nodes_per_row: u32) -> usize {
