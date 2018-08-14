@@ -15,5 +15,14 @@ pub struct ProcessedMaze {
 
 pub struct Point {
     pub x: u32,
-    pub y: u32
+    pub y: u32,
+    pub on_wall: Direction
+}
+
+#[derive(Debug, Copy, Clone)]
+pub enum Direction {
+    Left,
+    Right,
+    Up,
+    Down
 }
