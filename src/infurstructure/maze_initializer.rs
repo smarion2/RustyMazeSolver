@@ -51,6 +51,7 @@ pub fn create_wall_nodes(image: &self::image::DynamicImage) -> ProcessedMaze {
             let right_test = image.get_pixel(x + info.path_length as u32 + 1, y + info.path_length as u32 - 1).data;
             
             let n = Node::new(id, x as i32, y as i32, left_test[0], right_test[0], bottom_test[0], top_test[0]);
+            println!("id: {} left: {} right: {} top: {} bot: {} px: {} py: {}", n.node_id, n.left_wall, n.right_wall, n.top_wall, n.bot_wall, n.pixle_x, n.pixle_y);
             nodes.push(n);
             id += 1;
             x += node_length as u32;
@@ -169,37 +170,39 @@ fn check_for_wall_length(image: &self::image::DynamicImage, wall_color: [u8; 4])
     let mut wall_length: u8 = 0;
     let middle_horizontal: u32 = img_height / 2;
     let middle_verticle: u32 = img_width / 2;
-    for y in 0..img_width {
+    let mut y = 0;
+    while y < img_width {
         let mut length: u8 = 0;
         if image.get_pixel(middle_horizontal, y).data == wall_color {
             while image.get_pixel(middle_horizontal, y + length as u32).data == wall_color {
-                length += 1
+                length += 1;
             }
+            y += length as u32;
             if length < wall_length || wall_length == 0 {
                 wall_length = length;
             }
         } else if y > middle_verticle {
             break;
         }
+        y += 1;
     }
-
-    wall_length + 1
+    wall_length
 }
 
 fn convert_xy_to_vecpos(point: &Point, nodes_per_row: u32, node_length: u8) -> (u32, Direction) {
     //println!("nodes per row: {:?}", nodes_per_row);
     //println!("node length: {:?}", node_length);
     let mut x_pos = (point.x) / node_length as u32;
-    if x_pos == nodes_per_row {
-        x_pos = x_pos - 1;
-    }
+    //if x_pos == nodes_per_row {
+    //    x_pos = x_pos - 1;
+    //}
     //println!("x_pos: {:?}", x_pos);
     let mut y_pos = (point.y) / node_length as u32;
-    if y_pos == nodes_per_row {
-        y_pos = y_pos - 1;
-    }
+    //if y_pos == nodes_per_row {
+    //    y_pos = y_pos - 1;
+    //}
     //println!("y_pos: {:?}", y_pos);
-    ((y_pos * nodes_per_row + x_pos), point.on_wall)
+    ((y_pos * (nodes_per_row - 1) + x_pos), point.on_wall)
 }
 
 fn check_for_openings(image: &self::image::DynamicImage, wall_pos: u32, is_vertical: bool, wall: Direction, wall_color: [u8; 4]) -> (u8, Vec<Point>) {
