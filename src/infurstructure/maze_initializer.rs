@@ -51,13 +51,13 @@ pub fn create_wall_nodes(image: &self::image::DynamicImage) -> ProcessedMaze {
             let right_test = image.get_pixel(x + info.path_length as u32 + 1, y + info.path_length as u32 - 1).data;
             
             let n = Node::new(id, x as i32, y as i32, left_test[0], right_test[0], bottom_test[0], top_test[0]);
-            println!("id: {} left: {} right: {} top: {} bot: {} px: {} py: {}", n.node_id, n.left_wall, n.right_wall, n.top_wall, n.bot_wall, n.pixle_x, n.pixle_y);
+            //println!("id: {} left: {} right: {} top: {} bot: {} px: {} py: {}", n.node_id, n.left_wall, n.right_wall, n.top_wall, n.bot_wall, n.pixle_x, n.pixle_y);
             nodes.push(n);
             id += 1;
             x += node_length as u32;
         }
         y += node_length as u32;
-        x = 1;
+        x = info.wall_length as u32 - 1;
     }
     println!("{} Nodes created", nodes.len());
     
@@ -67,9 +67,9 @@ pub fn create_wall_nodes(image: &self::image::DynamicImage) -> ProcessedMaze {
     // find entrance and exit node ids
     let nodes_per_row = width / node_length as u32;
     let (maze_entrance, entrance_wall) = convert_xy_to_vecpos(&info.maze_openings[0], nodes_per_row, node_length);
-    let (maze_exit, exit_wall) = convert_xy_to_vecpos(&info.maze_openings[info.path_length as usize], nodes_per_row, node_length);
+    let (maze_exit, exit_wall) = convert_xy_to_vecpos(&info.maze_openings[(info.path_length + 1) as usize], nodes_per_row, node_length);
     println!("pint1: ({},{})", &info.maze_openings[0].x, &info.maze_openings[0].y);
-    println!("point2: ({},{})", &info.maze_openings[info.path_length as usize].x, &info.maze_openings[info.path_length as usize].y);
+    println!("point2: ({},{})", &info.maze_openings[(info.path_length + 1) as usize].x, &info.maze_openings[(info.path_length + 1) as usize].y);
     
     println!("maze entrance id: {}", maze_entrance);
     println!("maze exit id: {}", maze_exit);
@@ -127,7 +127,7 @@ fn analyze_maze(image: &self::image::DynamicImage) -> MazeInfo {
         openings.append(&mut maze_openings);
     }
 
-    let (path_length, mut maze_openings) = check_for_openings(&image, 1, false, Direction::Up, wall_color);
+    let (path_length, mut maze_openings) = check_for_openings(&image, 0, false, Direction::Up, wall_color);
     if path_length != 0 {
         let (new_path, is_path_uniform) = check_path_length(path_width, path_length);
         if new_path != 0 {

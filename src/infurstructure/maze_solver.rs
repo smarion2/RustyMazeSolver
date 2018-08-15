@@ -7,7 +7,7 @@ use std::num;
 pub fn solve_maze(mut maze: ProcessedMaze) {
     println!("Starting to solve");
     let mut prio_queue = BinaryHeap::new();
-    let start = Node::clone(&maze.maze_nodes[(maze.starting_node -1) as usize]);
+    let start = Node::clone(&maze.maze_nodes[(maze.starting_node) as usize]);
     let end = Node::clone(&maze.maze_nodes[maze.ending_node as usize]);
     prio_queue.push(start);
     let mut nodes_explored: u32 = 0;
@@ -62,7 +62,16 @@ pub fn solve_maze(mut maze: ProcessedMaze) {
     }
 }
 
+pub fn draw_maze(maze: ProcessedMaze) {
+    let end = &maze.ending_node;
+    let current_node: u32 = 0;
+    while &current_node != end {
+
+    }
+}
+
 pub fn transverse(direction: Direction, node_id: u32, nodes_per_row: u32) -> usize {
+    //println!("direction: {:?}", direction);
     match direction {
         Direction::Left => (node_id - 1) as usize,
         Direction::Right => (node_id + 1) as usize,
