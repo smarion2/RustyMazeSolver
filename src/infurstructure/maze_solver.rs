@@ -1,10 +1,15 @@
+extern crate image;
+
 use modals::node_info::ProcessedMaze;
 use modals::node_info::Direction;
 use modals::wall_node::Node;
 use std::collections::BinaryHeap;
 use std::num;
+use std::fs::File;
 
-pub fn solve_maze(mut maze: ProcessedMaze) {
+use self::image::GenericImage;
+
+pub fn solve_maze(mut maze: ProcessedMaze, image: self::image::DynamicImage) {
     println!("Starting to solve");
     let mut prio_queue = BinaryHeap::new();
     let start = Node::clone(&maze.maze_nodes[(maze.starting_node) as usize]);
@@ -16,6 +21,8 @@ pub fn solve_maze(mut maze: ProcessedMaze) {
         //println!("node: {} top:{} bot:{} left:{} right:{}", node.node_id, node.top_wall, node.bot_wall, node.left_wall, node.right_wall);
         if node.node_id == maze.ending_node {
             println!("SOLVED MAZE!~ Explored {} nodes", nodes_explored);
+            println!("starting to draw maze now...");
+            draw_maze(maze, image);
             break;
         }
 
@@ -62,12 +69,28 @@ pub fn solve_maze(mut maze: ProcessedMaze) {
     }
 }
 
-pub fn draw_maze(maze: ProcessedMaze) {
-    let end = &maze.ending_node;
-    let current_node: u32 = 0;
-    while &current_node != end {
-
+pub fn draw_maze(maze: ProcessedMaze, mut image: self::image::DynamicImage) {
+    let mut current_node_id = maze.ending_node;
+    let path_color = image::Rgba([255, 0, 0, 255]);
+    while current_node_id != maze.starting_node {
+        println!("current node id {}", current_node_id);
+        let node = &maze.maze_nodes[current_node_id as usize];
+        //let mut x = node.pixle_x;
+        //let mut y = node.pixle_y;
+        for x in 0..(maze.path_length) {
+            for y in 0..(maze.path_length) {
+                println!("x: {} y: {} path_length: {}", x, y, maze.path_length);
+                let set_x = node.pixle_x as u32 + x;
+                let set_y = node.pixle_y as u32 + y;
+                image.put_pixel(set_x, set_y, path_color);
+            }
+            
+        }
+        current_node_id = node.from_node_id;
     }
+    let ref mut fout = File::create("./TestMazes/solved.png").unwrap();
+
+    image.save(fout, image::PNG).unwrap();
 }
 
 pub fn transverse(direction: Direction, node_id: u32, nodes_per_row: u32) -> usize {

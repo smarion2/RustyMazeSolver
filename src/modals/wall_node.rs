@@ -33,8 +33,6 @@ impl PartialOrd for Node {
 impl Node {
     pub fn new(id: u32, px: i32, py: i32, 
             lwall: u8, rwall: u8, bwall: u8, twall: u8) -> Node {
-        let pixle_x = px;
-        let pixle_y = py;
         let mut left = false;
         let mut right = false;
         let mut top = false;

@@ -10,6 +10,7 @@ pub struct ProcessedMaze {
     pub starting_node: u32,
     pub ending_node: u32,
     pub nodes_per_row: u32,
+    pub path_length: u32,
     pub maze_nodes: Vec<Node>
 }
 

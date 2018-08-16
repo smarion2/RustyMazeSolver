@@ -11,5 +11,5 @@ fn main() {
     };
     let img = infurstructure::maze_initializer::open_maze(file);
     let nodes = infurstructure::maze_initializer::create_wall_nodes(&img);    
-    infurstructure::maze_solver::solve_maze(nodes);
+    infurstructure::maze_solver::solve_maze(nodes, img);
 }

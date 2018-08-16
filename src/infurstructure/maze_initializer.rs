@@ -50,7 +50,7 @@ pub fn create_wall_nodes(image: &self::image::DynamicImage) -> ProcessedMaze {
             let left_test = image.get_pixel(x, y + info.path_length as u32 - 1).data;
             let right_test = image.get_pixel(x + info.path_length as u32 + 1, y + info.path_length as u32 - 1).data;
             
-            let n = Node::new(id, x as i32, y as i32, left_test[0], right_test[0], bottom_test[0], top_test[0]);
+            let n = Node::new(id, x as i32 + 1, y as i32 + 1, left_test[0], right_test[0], bottom_test[0], top_test[0]);
             //println!("id: {} left: {} right: {} top: {} bot: {} px: {} py: {}", n.node_id, n.left_wall, n.right_wall, n.top_wall, n.bot_wall, n.pixle_x, n.pixle_y);
             nodes.push(n);
             id += 1;
@@ -94,7 +94,7 @@ pub fn create_wall_nodes(image: &self::image::DynamicImage) -> ProcessedMaze {
         }
     }
 
-    ProcessedMaze { starting_node: maze_entrance, ending_node: maze_exit, nodes_per_row: nodes_per_row, maze_nodes: nodes }
+    ProcessedMaze { starting_node: maze_entrance, ending_node: maze_exit, nodes_per_row: nodes_per_row, path_length: info.path_length as u32, maze_nodes: nodes }
 }
 // need to decide how much to analyze, i dont think going through the entire maze is necessary 
 // maybe just look around all the edges for opening and closing and a few lines?
